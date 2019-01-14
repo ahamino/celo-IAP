@@ -147,7 +147,7 @@ function do_load() {
     if (obj.type === "snapshot") {
       document.getElementById('txtable').innerHTML = '';
       obj.records.forEach(x => {
-        //if (x.name === "ExchangeRateSet") return;
+        if (x.name === "ExchangeRateSet") return;
         process_event(x);
       });
     } else {
