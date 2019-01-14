@@ -100,7 +100,7 @@ function parse_event(x) {
     }
     case 'Exchange':
     {
-      record.weiValue0 = rest[4]; record.weiValue1 = rest[3];
+      record.weiValue0 = rest[3]; record.weiValue1 = rest[4];
       let a = fromwei_f(record.weiValue0), b = fromwei_f(record.weiValue1);
       record.approxValue0 = a; record.approxValue1 = b;
       record.approxExchangeRate = a / b;
@@ -158,7 +158,7 @@ function parse_event(x) {
       record.ercName0 = ercname(rest[0]);
       break;
     case 'Exchange':
-      record.ercName0 = ercname(rest[2]);
+      record.ercName0 = ercname(rest[0]);
       record.ercName1 = ercname(rest[1]);
       break;
     case 'AuctionStageChanged':
