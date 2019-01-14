@@ -224,6 +224,7 @@ export async function executeBid(
     buyTokenAmount,
     web3
   )
+  console.log(`Committed bid with salt: ${salt}`)
 
   await sleepUntilStage(StagesEnum.Reveal, auctionParams)
   await revealBid(
@@ -251,6 +252,6 @@ export async function executeBid(
   await fillBid(auction, sellToken.options.address, buyToken.options.address, bidIndex)
   return await Promise.all([
     withdraw(auction, sellToken.options.address, account),
-    withdraw(auction, sellToken.options.address, account),
+    withdraw(auction, buyToken.options.address, account),
   ])
 }

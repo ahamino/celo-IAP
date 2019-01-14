@@ -20,7 +20,7 @@ div#txtable span:nth-child(2) { width:  46px; }
 div#txtable span:nth-child(3) { width:  46px; }
 div#txtable span:nth-child(4) { width:  46px; }
 div#txtable span:nth-child(5) { width: 127px; }
-div#txtable span:nth-child(6) { width: 342px; }
+div#txtable span:nth-child(6) { width: 442px; }
 div#txtable span:nth-child(7) { width: 154px; }
 </style>
 
@@ -29,7 +29,7 @@ div#txtable span:nth-child(7) { width: 154px; }
 <script type="text/javascript">
 
 const kWebSocketURL = "ws://localhost:8099/full"
-const kBase = "https://mitiapdryrun-blockscout.celo-networks-dev.org/";
+const kBase = "https://mitiapproduction-blockscout.celo-testnet.org/";
 
 function fromwei(x) {
   return BigNumber(x, 16).shiftedBy(-18).toString();
@@ -147,7 +147,7 @@ function do_load() {
     if (obj.type === "snapshot") {
       document.getElementById('txtable').innerHTML = '';
       obj.records.forEach(x => {
-        //if (x.name === "ExchangeRateSet") return;
+        if (x.name === "ExchangeRateSet") return;
         process_event(x);
       });
     } else {

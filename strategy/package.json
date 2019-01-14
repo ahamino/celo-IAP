@@ -12,11 +12,11 @@
     "typescript": "^3.2.2"
   },
   "scripts": {
-    "postinstall": "yarn run celo-sdk mitiapstaging && yarn run tsc -b",
-    "rebalance": "yarn run ts-node src/rebalance.ts",
-    "simple-bid": "yarn run ts-node src/bid.ts simple",
-    "multi-bid": "yarn run ts-node src/bid.ts multi"
+    "postinstall": "yarn run celo-sdk mitiapproduction && yarn run tsc -b",
+    "auto-rebalance": "yarn run ts-node src/exchange/rebalance.ts",
+    "auto-bid-simple": "yarn run ts-node src/auction/simpleBid.ts",
+    "auto-bid-multi": "yarn run ts-node src/auction/multiBid.ts"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "private": true
 }

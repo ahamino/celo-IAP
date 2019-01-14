@@ -7,8 +7,8 @@ const events = require('events');
 const WebSocket = require('ws');
 const BigNumber = require('bignumber.js');
 
-const kGeth = "ws://35.233.175.45:8546/ws";
-const kBlockScout = "https://mitiapstaging-blockscout.celo-networks-dev.org/";
+const kGeth = "ws://35.247.61.47:8546/ws";
+const kBlockScout = "https://mitiapproduction-blockscout.celo-testnet.org/";
 
 
 function tlog(msg) {
@@ -100,7 +100,7 @@ function parse_event(x) {
     }
     case 'Exchange':
     {
-      record.weiValue0 = rest[4]; record.weiValue1 = rest[3];
+      record.weiValue0 = rest[3]; record.weiValue1 = rest[4];
       let a = fromwei_f(record.weiValue0), b = fromwei_f(record.weiValue1);
       record.approxValue0 = a; record.approxValue1 = b;
       record.approxExchangeRate = a / b;
@@ -158,7 +158,7 @@ function parse_event(x) {
       record.ercName0 = ercname(rest[0]);
       break;
     case 'Exchange':
-      record.ercName0 = ercname(rest[2]);
+      record.ercName0 = ercname(rest[0]);
       record.ercName1 = ercname(rest[1]);
       break;
     case 'AuctionStageChanged':
