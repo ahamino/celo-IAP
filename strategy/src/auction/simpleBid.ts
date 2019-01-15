@@ -66,7 +66,7 @@ const simpleBidStrategy = async (web3: any, account: string) => {
 
     console.info(
       `your current balance of ${sellTokenSymbol} is ${sellTokenBalance}, the cap is ${web3.utils.toBN(
-        auctionInProgress.params.cap
+        auctionCap
       )}, and we will bid ${sellTokenAmount} in this auction`
     )
 
