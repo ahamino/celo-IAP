@@ -15,7 +15,6 @@
     "postinstall": "yarn run celo-sdk mitiapproduction && yarn run tsc -b",
     "auto-rebalance": "yarn run ts-node src/exchange/rebalance.ts",
     "auto-bid-simple": "yarn run ts-node src/auction/simpleBid.ts",
-    "auto-bid-multi": "yarn run ts-node src/auction/multiBid.ts"
   },
   "license": "Apache-2.0",
   "private": true
