@@ -106,7 +106,6 @@ const bid = async () => {
   let account: string;
 
   if (!argv.noUnlock) {
-    // TODO(asa): Don't unlock when already unlocked, won't work with the miner as is
     account = await unlockAccount(web3, FOUR_WEEKS); // Unlock for 4 weeks so our strategy can run.
   } else {
     const accounts = await web3.eth.getAccounts();
