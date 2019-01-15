@@ -13,14 +13,15 @@ import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
 // Strategy parameters (feel free to play around with these)
 const bidDiscount = 1.1 // The 'discount' we bid at (1.1 = 10%)
-const usdBalanceProportionToBid = 0.5 // The proportion of our USD Balance we bid
+const capProportionToBid = 1.0 // The proportion of the cap we bid
 const randomFactor = Math.random() * 0.001 - 0.0005 // a random 'jitter' to make a bid easy to identify
 
 const FOUR_WEEKS = 4 * 7 * 24 * 3600
 
-// This implements a simple auction strategy. We bid half our dollar balance in the auction and
+// This implements a simple auction strategy. We bid the cap in the auction and
 // ask for tokens such that we get a 10% discount relative to the current price quoted
 // on the exchange.
+// This is the strategy used by the 'whale' auction participant
 const simpleBidStrategy = async (web3: any, account: string) => {
   // Initialize contract objects
   const exchange: ExchangeType = await Exchange(web3)
@@ -51,13 +52,13 @@ const simpleBidStrategy = async (web3: any, account: string) => {
 
     // construct bid such that we always bid the cap amount in USD
     if (buyTokenSymbol === 'cUSD') {
-      buyTokenAmount = sellTokenBalance.times(usdBalanceProportionToBid).decimalPlaces(0)
+      buyTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
       sellTokenAmount = buyTokenAmount
         .times(price)
         .times(bidAdjustment)
         .decimalPlaces(0)
     } else {
-      sellTokenAmount = sellTokenBalance.times(usdBalanceProportionToBid).decimalPlaces(0)
+      sellTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
       buyTokenAmount = sellTokenAmount
         .div(price)
         .div(bidAdjustment)
