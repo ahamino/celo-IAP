@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js'
 import Web3 = require('web3')
 
 import BSTAuction from '@celo/sdk/dist/contracts/BSTAuction'
@@ -8,7 +9,7 @@ import { unlockAccount } from '@celo/sdk/dist/src/account-utils'
 import { executeBid, findAuctionInProgress } from '@celo/sdk/dist/src/auction-utils'
 import { selectContractByAddress } from '@celo/sdk/dist/src/contract-utils'
 import { exchangePrice } from '@celo/sdk/dist/src/exchange-utils'
-import { balanceOf } from '@celo/sdk/dist/src/erc20-utils'
+import { balanceOf, parseFromContractDecimals } from '@celo/sdk/dist/src/erc20-utils'
 import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
 // Strategy parameters (feel free to play around with these)
@@ -64,10 +65,15 @@ const simpleBidStrategy = async (web3: any, account: string) => {
         .decimalPlaces(0)
     }
 
+    // Tokens are divisible by 10^-d, where d typically equals 18. The balance returned by balanceOf
+    // is in the smalled currency unit, and thus needs to be converted into a more readable number.
+    // For example, for a token with d == 18, if balanceOf returns 1,800,000,000,000,000,000 we
+    // would want to log a balance of 1.8.
+
     console.info(
-      `your current balance of ${sellTokenSymbol} is ${sellTokenBalance}, the cap is ${web3.utils.toBN(
+      `your current balance of ${sellTokenSymbol} is ${await parseFromContractDecimals(sellTokenBalance, sellToken)}, the cap is ${web3.utils.fromWei(web3.utils.toBN(
         auctionCap
-      )}, and we will bid ${sellTokenAmount} in this auction`
+      ))}, and we will bid ${await parseFromContractDecimals(sellTokenAmount, sellToken)} in this auction`
     )
 
     // Bid on the auction
@@ -85,8 +91,16 @@ const simpleBidStrategy = async (web3: any, account: string) => {
       web3
     )
     console.info('Bid successfully executed!')
-    console.info(`${sellTokenSymbol} withdrawn: ${auctionSellTokenWithdrawn}`)
-    console.info(`${buyTokenSymbol} withdrawn: ${auctionBuyTokenWithdrawn}`)
+    if (parseInt(auctionSellTokenWithdrawn) > 0) {
+      console.info(
+        `Withdrew ${await parseFromContractDecimals(new BigNumber(auctionSellTokenWithdrawn), sellToken)} ${await sellToken.methods.symbol().call()} from the auction`
+      )
+    }
+    if (parseInt(auctionBuyTokenWithdrawn) > 0) {
+      console.info(
+        `Withdrew ${await parseFromContractDecimals(new BigNumber(auctionBuyTokenWithdrawn), buyToken)} ${await buyToken.methods.symbol().call()} from the auction`
+      )
+    }
   })
 }
 
