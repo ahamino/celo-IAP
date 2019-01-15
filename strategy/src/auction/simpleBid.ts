@@ -1,4 +1,3 @@
-import { BigNumber } from 'bignumber.js'
 import Web3 = require('web3')
 
 import BSTAuction from '@celo/sdk/dist/contracts/BSTAuction'
@@ -14,14 +13,15 @@ import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
 // Strategy parameters (feel free to play around with these)
 const bidDiscount = 1.1 // The 'discount' we bid at (1.1 = 10%)
-const capProportionToBid = 0.9 // The proportion of the cap we bid
+const capProportionToBid = 1.0 // The proportion of the cap we bid
 const randomFactor = Math.random() * 0.001 - 0.0005 // a random 'jitter' to make a bid easy to identify
 
 const FOUR_WEEKS = 4 * 7 * 24 * 3600
 
-// This implements a simple auction strategy. We bid 90% of the cap in the auction and
+// This implements a simple auction strategy. We bid the cap in the auction and
 // ask for tokens such that we get a 10% discount relative to the current price quoted
 // on the exchange.
+// This is the strategy used by the 'whale' auction participant
 const simpleBidStrategy = async (web3: any, account: string) => {
   // Initialize contract objects
   const exchange: ExchangeType = await Exchange(web3)
@@ -43,23 +43,33 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     const auctionCap = auctionInProgress.params.cap
 
     const sellTokenBalance = await balanceOf(sellToken, account, web3)
-    const sellTokenAmount = BigNumber.min(auctionCap, sellTokenBalance)
-      .times(capProportionToBid)
-      .decimalPlaces(0)
+    const price = await exchangePrice(exchange, sellToken, buyToken)
+
+    let sellTokenAmount
+    let buyTokenAmount
+
+    const bidAdjustment = bidDiscount + randomFactor
+
+    // construct bid such that we always bid the cap amount in USD
+    if (buyTokenSymbol === 'cUSD') {
+      buyTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
+      sellTokenAmount = buyTokenAmount
+        .times(price)
+        .times(bidAdjustment)
+        .decimalPlaces(0)
+    } else {
+      sellTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
+      buyTokenAmount = sellTokenAmount
+        .div(price)
+        .div(bidAdjustment)
+        .decimalPlaces(0)
+    }
 
     console.info(
       `your current balance of ${sellTokenSymbol} is ${sellTokenBalance}, the cap is ${web3.utils.toBN(
         auctionInProgress.params.cap
       )}, and we will bid ${sellTokenAmount} in this auction`
     )
-
-    const bidAdjustment = bidDiscount + randomFactor
-
-    const price = await exchangePrice(exchange, buyToken, sellToken)
-    const buyTokenAmount = sellTokenAmount
-      .times(price)
-      .times(bidAdjustment)
-      .decimalPlaces(0)
 
     // Bid on the auction
     console.info(
