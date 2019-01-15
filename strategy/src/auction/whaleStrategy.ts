@@ -11,6 +11,8 @@ import { exchangePrice } from '@celo/sdk/dist/src/exchange-utils'
 import { balanceOf } from '@celo/sdk/dist/src/erc20-utils'
 import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
+// REFERENCE: This is the strategy used by the 'whale' auction participant
+
 // Strategy parameters (feel free to play around with these)
 const bidDiscount = 1.1 // The 'discount' we bid at (1.1 = 10%)
 const capProportionToBid = 1.0 // The proportion of the cap we bid
@@ -21,8 +23,7 @@ const FOUR_WEEKS = 4 * 7 * 24 * 3600
 // This implements a simple auction strategy. We bid the cap in the auction and
 // ask for tokens such that we get a 10% discount relative to the current price quoted
 // on the exchange.
-// This is the strategy used by the 'whale' auction participant
-const simpleBidStrategy = async (web3: any, account: string) => {
+const whaleStrategy = async (web3: any, account: string) => {
   // Initialize contract objects
   const exchange: ExchangeType = await Exchange(web3)
   const auction = await BSTAuction(web3)
@@ -107,7 +108,7 @@ const bid = async () => {
     const accounts = await web3.eth.getAccounts()
     account = accounts[0]
   }
-  simpleBidStrategy(web3, account)
+  whaleStrategy(web3, account)
 }
 
 bid()
