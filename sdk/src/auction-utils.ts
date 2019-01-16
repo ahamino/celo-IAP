@@ -198,8 +198,6 @@ export async function sleepUntilStage(stage: number, auctionParams: any) {
   await sleep(sleepTime)
 }
 
-// TODO(asa): This function is currently untested and should be deleted if not useful.
-// Committing this so others can re-use parts they deem useful.
 export async function executeBid(
   auction: AuctionType,
   sellToken: TokenType,
