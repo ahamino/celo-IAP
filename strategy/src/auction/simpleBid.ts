@@ -42,8 +42,8 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     const auctionInProgress = await findAuctionInProgress(stableToken, goldToken, auction)
     const auctionCap = auctionInProgress.params.cap
 
-    const buyTokenBalance = await balanceOf(buyToken, account, web3)
-    const price = await exchangePrice(exchange, sellToken, buyToken)
+    const sellTokenBalance = await balanceOf(sellToken, account, web3)
+    const price = await exchangePrice(exchange, buyToken, sellToken)
 
     let sellTokenAmount
     let buyTokenAmount
@@ -51,10 +51,10 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     const bidAdjustment = bidDiscount + randomFactor
 
     // construct bid such that we always bid the cap amount in USD
-    // buyToken here is what we are buying
-    // sellToken is what we are selling/releasing into circulatiom
-    buyTokenAmount = buyTokenBalance.times(balanceProportionToBid).decimalPlaces(0)
-    sellTokenAmount = buyTokenAmount
+    // buyToken here is what we are purchasing/winning from the auction
+    // sellToken is what we are selling/releasing to the auction
+    sellTokenAmount = sellTokenBalance.times(balanceProportionToBid).decimalPlaces(0)
+    buyTokenAmount = sellTokenAmount
       .times(price)
       .times(bidAdjustment)
       .decimalPlaces(0)
