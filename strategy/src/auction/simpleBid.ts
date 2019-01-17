@@ -51,6 +51,8 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     const bidAdjustment = bidDiscount + randomFactor
 
     // construct bid such that we always bid the cap amount in USD
+    // buyTokenSymbol here is what the auction is buying
+    // sellToken is what the auction is selling/releasing into circulatiom
     if (buyTokenSymbol === 'cUSD') {
       buyTokenAmount = sellTokenBalance.times(usdBalanceProportionToBid).decimalPlaces(0)
       sellTokenAmount = buyTokenAmount
@@ -60,7 +62,7 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     } else {
       sellTokenAmount = sellTokenBalance.times(usdBalanceProportionToBid).decimalPlaces(0)
       buyTokenAmount = sellTokenAmount
-        .div(price)
+        .times(price)
         .div(bidAdjustment)
         .decimalPlaces(0)
     }
