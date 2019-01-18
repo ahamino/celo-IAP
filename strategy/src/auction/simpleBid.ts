@@ -71,7 +71,10 @@ const simpleBidStrategy = async (web3: any, account: string) => {
 
     // Bid on the auction
     console.info(
-      `Bidding on auction with ${sellTokenSymbol} ${sellTokenAmount} to purchase ${buyTokenSymbol} ${buyTokenAmount}`
+      `Bidding on auction with ${sellTokenSymbol} ${await parseFromContractDecimals(
+        sellTokenAmount,
+        sellToken
+      )} to purchase ${buyTokenSymbol} ${await parseFromContractDecimals(buyTokenAmount, buyToken)}`
     )
 
     const [auctionSellTokenWithdrawn, auctionBuyTokenWithdrawn] = await executeBid(
