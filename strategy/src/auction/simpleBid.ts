@@ -14,7 +14,7 @@ import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
 // Strategy parameters (feel free to play around with these)
 const bidDiscount = 1.1 // The 'discount' we bid at (1.1 = 10%)
-const usdBalanceProportionToBid = 0.5 // The proportion of our USD Balance we bid
+const balanceProportionToBid = 0.5 // The proportion of our sellTokenBalance we bid
 const randomFactor = Math.random() * 0.001 - 0.0005 // a random 'jitter' to make a bid easy to identify
 
 const FOUR_WEEKS = 4 * 7 * 24 * 3600
@@ -50,20 +50,13 @@ const simpleBidStrategy = async (web3: any, account: string) => {
 
     const bidAdjustment = bidDiscount + randomFactor
 
-    // construct bid such that we always bid the cap amount in USD
-    if (buyTokenSymbol === 'cUSD') {
-      buyTokenAmount = sellTokenBalance.times(usdBalanceProportionToBid).decimalPlaces(0)
-      sellTokenAmount = buyTokenAmount
-        .times(price)
-        .times(bidAdjustment)
-        .decimalPlaces(0)
-    } else {
-      sellTokenAmount = sellTokenBalance.times(usdBalanceProportionToBid).decimalPlaces(0)
-      buyTokenAmount = sellTokenAmount
-        .div(price)
-        .div(bidAdjustment)
-        .decimalPlaces(0)
-    }
+    // buyToken here is what we are purchasing/winning from the auction
+    // sellToken is what we are selling/releasing to the auction
+    sellTokenAmount = sellTokenBalance.times(balanceProportionToBid).decimalPlaces(0)
+    buyTokenAmount = sellTokenAmount
+      .div(price)
+      .times(bidAdjustment)
+      .decimalPlaces(0)
 
     // Tokens are divisible by 10^-d, where d typically equals 18. The balance returned by balanceOf
     // is in the smalled currency unit, and thus needs to be converted into a more readable number.
@@ -78,7 +71,10 @@ const simpleBidStrategy = async (web3: any, account: string) => {
 
     // Bid on the auction
     console.info(
-      `Bidding on auction with ${sellTokenSymbol} ${sellTokenAmount} to purchase ${buyTokenSymbol} ${buyTokenAmount}`
+      `Bidding on auction with ${sellTokenSymbol} ${await parseFromContractDecimals(
+        sellTokenAmount,
+        sellToken
+      )} to purchase ${buyTokenSymbol} ${await parseFromContractDecimals(buyTokenAmount, buyToken)}`
     )
 
     const [auctionSellTokenWithdrawn, auctionBuyTokenWithdrawn] = await executeBid(

@@ -56,25 +56,34 @@ const whaleStrategy = async (web3: any, account: string) => {
       buyTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
       sellTokenAmount = buyTokenAmount
         .times(price)
-        .times(bidAdjustment)
+        .div(bidAdjustment)
         .decimalPlaces(0)
     } else {
       sellTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
       buyTokenAmount = sellTokenAmount
         .div(price)
-        .div(bidAdjustment)
+        .times(bidAdjustment)
         .decimalPlaces(0)
     }
 
     console.info(
-      `your current balance of ${sellTokenSymbol} is ${sellTokenBalance}, the cap is ${web3.utils.toBN(
-        auctionCap
-      )}, and we will bid ${sellTokenAmount} in this auction`
+      `Your current balance of ${sellTokenSymbol} is ${await parseFromContractDecimals(
+        sellTokenBalance,
+        sellToken
+      )}, the cap is ${web3.utils.fromWei(
+        web3.utils.toBN(auctionCap)
+      )}, and we will bid ${await parseFromContractDecimals(
+        sellTokenAmount,
+        sellToken
+      )} in this auction`
     )
 
     // Bid on the auction
     console.info(
-      `Bidding on auction with ${sellTokenSymbol} ${sellTokenAmount} to purchase ${buyTokenSymbol} ${buyTokenAmount}`
+      `Bidding on auction with ${sellTokenSymbol} ${await parseFromContractDecimals(
+        sellTokenAmount,
+        sellToken
+      )} to purchase ${buyTokenSymbol} ${await parseFromContractDecimals(buyTokenAmount, buyToken)}`
     )
 
     const [auctionSellTokenWithdrawn, auctionBuyTokenWithdrawn] = await executeBid(
@@ -87,8 +96,22 @@ const whaleStrategy = async (web3: any, account: string) => {
       web3
     )
     console.info('Bid successfully executed!')
-    console.info(`${sellTokenSymbol} withdrawn: ${auctionSellTokenWithdrawn}`)
-    console.info(`${buyTokenSymbol} withdrawn: ${auctionBuyTokenWithdrawn}`)
+    if (parseInt(auctionSellTokenWithdrawn) > 0) {
+      console.info(
+        `Withdrew ${await parseFromContractDecimals(
+          new BigNumber(auctionSellTokenWithdrawn),
+          sellToken
+        )} ${sellTokenSymbol} from the auction`
+      )
+    }
+    if (parseInt(auctionBuyTokenWithdrawn) > 0) {
+      console.info(
+        `Withdrew ${await parseFromContractDecimals(
+          new BigNumber(auctionBuyTokenWithdrawn),
+          buyToken
+        )} ${buyTokenSymbol} from the auction`
+      )
+    }
   })
 }
 
