@@ -44,7 +44,7 @@ const whaleStrategy = async (web3: any, account: string) => {
     const auctionCap = auctionInProgress.params.cap
 
     const sellTokenBalance = await balanceOf(sellToken, account, web3)
-    const price = await exchangePrice(exchange, sellToken, buyToken)
+    const price = await exchangePrice(exchange, buyToken, sellToken)
 
     let sellTokenAmount
     let buyTokenAmount
@@ -52,17 +52,18 @@ const whaleStrategy = async (web3: any, account: string) => {
     const bidAdjustment = bidDiscount + randomFactor
 
     // construct bid such that we always bid the cap amount in USD
+    // buyTokenAmount = sellTokenAmount * price * adjustment
     if (buyTokenSymbol === 'cUSD') {
       buyTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
       sellTokenAmount = buyTokenAmount
-        .times(price)
-        .times(bidAdjustment)
+        .div(price)
+        .div(bidAdjustment)
         .decimalPlaces(0)
     } else {
       sellTokenAmount = auctionCap.times(capProportionToBid).decimalPlaces(0)
       buyTokenAmount = sellTokenAmount
-        .div(price)
-        .div(bidAdjustment)
+        .times(price)
+        .times(bidAdjustment)
         .decimalPlaces(0)
     }
 

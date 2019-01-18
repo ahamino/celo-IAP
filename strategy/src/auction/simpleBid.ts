@@ -14,7 +14,7 @@ import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
 // Strategy parameters (feel free to play around with these)
 const bidDiscount = 1.1 // The 'discount' we bid at (1.1 = 10%)
-const balanceProportionToBid = 0.5 // The proportion of our USD Balance we bid
+const balanceProportionToBid = 0.5 // The proportion of our sellTokenBalance we bid
 const randomFactor = Math.random() * 0.001 - 0.0005 // a random 'jitter' to make a bid easy to identify
 
 const FOUR_WEEKS = 4 * 7 * 24 * 3600
@@ -50,7 +50,6 @@ const simpleBidStrategy = async (web3: any, account: string) => {
 
     const bidAdjustment = bidDiscount + randomFactor
 
-    // construct bid such that we always bid the cap amount in USD
     // buyToken here is what we are purchasing/winning from the auction
     // sellToken is what we are selling/releasing to the auction
     sellTokenAmount = sellTokenBalance.times(balanceProportionToBid).decimalPlaces(0)
