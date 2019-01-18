@@ -63,10 +63,28 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     // For example, for a token with d == 18, if balanceOf returns 1,800,000,000,000,000,000 we
     // would want to log a balance of 1.8.
 
+    const sellTokenBalanceDisplay = await parseFromContractDecimals(
+      sellTokenBalance,
+      sellToken
+    )
+    const sellTokenAmountDisplay = await parseFromContractDecimals(
+      sellTokenAmount,
+      sellToken
+    )
+    const buyTokenAmountDisplay = await parseFromContractDecimals(
+      buyTokenAmount,
+      buyToken
+    )
+
     console.info(
-      `your current balance of ${sellTokenSymbol} is ${await parseFromContractDecimals(sellTokenBalance, sellToken)}, the cap is ${web3.utils.fromWei(web3.utils.toBN(
-        auctionCap
-      ))}, and we will bid ${await parseFromContractDecimals(sellTokenAmount, sellToken)} in this auction`
+      `Your current balance of ${sellTokenSymbol} is ${sellTokenBalanceDisplay}, the cap is ${web3.utils.fromWei(
+        web3.utils.toBN(auctionCap)
+      )}, and we will bid ${sellTokenAmountDisplay} in this auction`
+    )
+
+    // Bid on the auction
+    console.info(
+      `Bidding on auction with ${sellTokenSymbol} ${sellTokenAmountDisplay} to purchase ${buyTokenSymbol} ${buyTokenAmountDisplay}`
     )
 
     // Bid on the auction
@@ -77,15 +95,6 @@ const simpleBidStrategy = async (web3: any, account: string) => {
       )} to purchase ${buyTokenSymbol} ${await parseFromContractDecimals(buyTokenAmount, buyToken)}`
     )
 
-    const [auctionSellTokenWithdrawn, auctionBuyTokenWithdrawn] = await executeBid(
-      auction,
-      sellToken,
-      buyToken,
-      sellTokenAmount,
-      buyTokenAmount,
-      account,
-      web3
-    )
     console.info('Bid successfully executed!')
     if (parseInt(auctionSellTokenWithdrawn) > 0) {
       console.info(

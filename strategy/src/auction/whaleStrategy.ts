@@ -14,7 +14,7 @@ import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 // REFERENCE: This is the strategy used by the 'whale' auction participant
 
 // Strategy parameters (feel free to play around with these)
-const bidDiscount = 1.1 // The 'discount' we bid at (1.1 = 10%)
+const bidDiscount = 1.5 // The 'discount' we bid at (1.1 = 10%)
 const capProportionToBid = 1.0 // The proportion of the cap we bid
 const randomFactor = Math.random() * 0.001 - 0.0005 // a random 'jitter' to make a bid easy to identify
 
@@ -66,16 +66,28 @@ const whaleStrategy = async (web3: any, account: string) => {
         .decimalPlaces(0)
     }
 
+    const sellTokenBalanceDisplay = await parseFromContractDecimals(
+      sellTokenBalance,
+      sellToken
+    )
+    const sellTokenAmountDisplay = await parseFromContractDecimals(
+      sellTokenAmount,
+      sellToken
+    )
+    const buyTokenAmountDisplay = await parseFromContractDecimals(
+      buyTokenAmount,
+      buyToken
+    )
+
     console.info(
-      `Your current balance of ${sellTokenSymbol} is ${await parseFromContractDecimals(
-        sellTokenBalance,
-        sellToken
-      )}, the cap is ${web3.utils.fromWei(
+      `Your current balance of ${sellTokenSymbol} is ${sellTokenBalanceDisplay}, the cap is ${web3.utils.fromWei(
         web3.utils.toBN(auctionCap)
-      )}, and we will bid ${await parseFromContractDecimals(
-        sellTokenAmount,
-        sellToken
-      )} in this auction`
+      )}, and we will bid ${sellTokenAmountDisplay} in this auction`
+    )
+
+    // Bid on the auction
+    console.info(
+      `Bidding on auction with ${sellTokenSymbol} ${sellTokenAmountDisplay} to purchase ${buyTokenSymbol} ${buyTokenAmountDisplay}`
     )
 
     // Bid on the auction

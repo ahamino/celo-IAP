@@ -22,4 +22,4 @@ This strategy listens to the blockchain for trades on the exchange made by other
 
 ## Whale Strategy
 
-We have included, for transparency, the strategy that runs in every auction to simulate competitive market conditions in which the full demand of the auction is filled at some (discounted) price. This strategy bids the cap of the auction in cUSD (converted to cGLD by current exchange rate in the expansion case) in every auction at a 10% discount to the going exchange rate, plus or minus a small random jitter.
+We have included, for transparency, the strategy that runs in every auction to simulate competitive market conditions in which the full demand of the auction is filled at some (discounted) price. This strategy bids the cap of the auction in cUSD (converted to cGLD by current exchange rate in the expansion case) in every auction at a 50% discount to the going exchange rate, plus or minus a small random jitter.
