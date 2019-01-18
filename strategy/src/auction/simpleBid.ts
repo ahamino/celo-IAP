@@ -43,7 +43,7 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     const auctionCap = auctionInProgress.params.cap
 
     const sellTokenBalance = await balanceOf(sellToken, account, web3)
-    const price = await exchangePrice(exchange, buyToken, sellToken)
+    const price = await exchangePrice(exchange, sellToken, buyToken)
 
     let sellTokenAmount
     let buyTokenAmount
@@ -54,7 +54,7 @@ const simpleBidStrategy = async (web3: any, account: string) => {
     // sellToken is what we are selling/releasing to the auction
     sellTokenAmount = sellTokenBalance.times(balanceProportionToBid).decimalPlaces(0)
     buyTokenAmount = sellTokenAmount
-      .times(price)
+      .div(price)
       .times(bidAdjustment)
       .decimalPlaces(0)
 
