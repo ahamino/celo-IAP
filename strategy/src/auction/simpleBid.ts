@@ -76,10 +76,10 @@ const simpleBidStrategy = async (web3: any, account: string) => {
       buyToken
     )
 
+    console.info(`The auction cap is ${web3.utils.fromWei(web3.utils.toBN(auctionCap))}`)
+
     console.info(
-      `Your current balance of ${sellTokenSymbol} is ${sellTokenBalanceDisplay}, the cap is ${web3.utils.fromWei(
-        web3.utils.toBN(auctionCap)
-      )}, and we will bid ${sellTokenAmountDisplay} in this auction`
+      `Your current balance of ${sellTokenSymbol} is ${sellTokenBalanceDisplay} and we will bid ${sellTokenAmountDisplay} in this auction`
     )
 
     // Bid on the auction
@@ -87,12 +87,14 @@ const simpleBidStrategy = async (web3: any, account: string) => {
       `Bidding on auction with ${sellTokenSymbol} ${sellTokenAmountDisplay} to purchase ${buyTokenSymbol} ${buyTokenAmountDisplay}`
     )
 
-    // Bid on the auction
-    console.info(
-      `Bidding on auction with ${sellTokenSymbol} ${await parseFromContractDecimals(
-        sellTokenAmount,
-        sellToken
-      )} to purchase ${buyTokenSymbol} ${await parseFromContractDecimals(buyTokenAmount, buyToken)}`
+    const [auctionSellTokenWithdrawn, auctionBuyTokenWithdrawn] = await executeBid(
+      auction,
+      sellToken,
+      buyToken,
+      sellTokenAmount,
+      buyTokenAmount,
+      account,
+      web3
     )
 
     console.info('Bid successfully executed!')
