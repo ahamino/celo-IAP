@@ -24,7 +24,7 @@ const FOUR_WEEKS = 4 * 7 * 24 * 3600
 // This implements a simple auction strategy. We bid the cap in the auction and
 // ask for tokens such that we get a 10% discount relative to the current price quoted
 // on the exchange.
-const simpleBidStrategy = async (web3: any, account: string) => {
+const whaleStrategy = async (web3: any, account: string) => {
   // Initialize contract objects
   const exchange: ExchangeType = await Exchange(web3)
   const auction = await BSTAuction(web3)
