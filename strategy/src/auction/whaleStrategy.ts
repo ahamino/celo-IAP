@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import Web3 = require('web3')
+import Web2 = require('web3')
 
 import BSTAuction from '@celo/sdk/dist/contracts/BSTAuction'
 import Exchange from '@celo/sdk/dist/contracts/Exchange'
