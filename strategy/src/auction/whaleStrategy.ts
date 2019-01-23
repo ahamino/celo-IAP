@@ -14,7 +14,8 @@ import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 // REFERENCE: This is the strategy used by the 'whale' auction participant
 
 // Strategy parameters (feel free to play around with these)
-const bidDiscount = 1.5 // The 'discount' we bid at (1.5 = 50%)
+const standardBidDiscount = 1.2 // The 'discount' we bid at (1.2 = 20%)
+const powerHourDiscount = 1.5 // The 'discount' we bid at (1.5 = 50%)
 const capProportionToBid = 1.0 // The proportion of the cap we bid
 const randomFactor = Math.random() * 0.001 - 0.0005 // a random 'jitter' to make a bid easy to identify
 
@@ -49,6 +50,11 @@ const whaleStrategy = async (web3: any, account: string) => {
     let sellTokenAmount
     let buyTokenAmount
 
+    // We aim for, in expectation, one power hour every 24 hours
+    const isPowerHour = Math.random() * 24 < 1
+
+    const bidDiscount = isPowerHour ? powerHourDiscount : standardBidDiscount
+
     const bidAdjustment = bidDiscount + randomFactor
 
     // construct bid such that we always bid the cap amount in USD
@@ -66,18 +72,9 @@ const whaleStrategy = async (web3: any, account: string) => {
         .decimalPlaces(0)
     }
 
-    const sellTokenBalanceDisplay = await parseFromContractDecimals(
-      sellTokenBalance,
-      sellToken
-    )
-    const sellTokenAmountDisplay = await parseFromContractDecimals(
-      sellTokenAmount,
-      sellToken
-    )
-    const buyTokenAmountDisplay = await parseFromContractDecimals(
-      buyTokenAmount,
-      buyToken
-    )
+    const sellTokenBalanceDisplay = await parseFromContractDecimals(sellTokenBalance, sellToken)
+    const sellTokenAmountDisplay = await parseFromContractDecimals(sellTokenAmount, sellToken)
+    const buyTokenAmountDisplay = await parseFromContractDecimals(buyTokenAmount, buyToken)
 
     console.info(`The auction cap is ${web3.utils.fromWei(web3.utils.toBN(auctionCap))}`)
 
@@ -87,7 +84,7 @@ const whaleStrategy = async (web3: any, account: string) => {
 
     // Bid on the auction
     console.info(
-      `Bidding on auction with ${sellTokenSymbol} ${sellTokenAmountDisplay} to purchase ${buyTokenSymbol} ${buyTokenAmountDisplay}`
+      `Bidding on auction with ${sellTokenAmountDisplay} ${sellTokenSymbol} to purchase ${buyTokenAmountDisplay} ${buyTokenSymbol}`
     )
 
     const [auctionSellTokenWithdrawn, auctionBuyTokenWithdrawn] = await executeBid(
