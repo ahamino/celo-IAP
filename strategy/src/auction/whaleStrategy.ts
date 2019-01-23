@@ -1,3 +1,4 @@
+import { BigNumber } from 'bignumber.js'
 import Web3 = require('web3')
 
 import BSTAuction from '@celo/sdk/dist/contracts/BSTAuction'
@@ -8,7 +9,7 @@ import { unlockAccount } from '@celo/sdk/dist/src/account-utils'
 import { executeBid, findAuctionInProgress } from '@celo/sdk/dist/src/auction-utils'
 import { selectContractByAddress } from '@celo/sdk/dist/src/contract-utils'
 import { exchangePrice } from '@celo/sdk/dist/src/exchange-utils'
-import { balanceOf } from '@celo/sdk/dist/src/erc20-utils'
+import { balanceOf, parseFromContractDecimals } from '@celo/sdk/dist/src/erc20-utils'
 import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
 // REFERENCE: This is the strategy used by the 'whale' auction participant
