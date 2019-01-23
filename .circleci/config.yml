@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build:
+  strategy-build-lint:
     docker:
       - image: circleci/node:9.10
     working_directory: ~/repo
@@ -22,4 +22,25 @@ jobs:
       # Check that things compile
       - run: yarn run tsc
 
+  sdk-build:
+    docker:
+      - image: circleci/node:9.10
+    working_directory: ~/repo
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "sdk/package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: cd sdk && yarn install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "sdk/package.json" }}
+      # check that the sdk builds
+      - run: cd sdk && yarn run build
 
