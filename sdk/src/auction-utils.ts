@@ -112,6 +112,7 @@ export async function getBidIndex(
     const bid = parseBidParams(
       await auction.methods.getBidParams(sellTokenAddress, buyTokenAddress, account, i).call()
     )
+    console.log(`bids: ${bid}`)
     if (bid.bidHash === bidHash) {
       return i
     }
@@ -238,19 +239,6 @@ export async function executeBid(
   )
 
   console.log(`Results from reveal: ${rev}`)
-
-  const numBids = await auction.methods
-    .getNumBids(sellToken.options.address, buyToken.options.address, account)
-    .call()
-  for (let i = 0; i < parseInt(numBids); i++) {
-    const bid = parseBidParams(
-      await auction.methods.getBidParams(sellToken.options.address, buyToken.options.address, account, i).call()
-    )
-    console.log(`bids: ${bid}`)
-    /*if (bid.bidHash === bidHash) {
-      return i
-    }*/
-  }
 
   await sleepUntilStage(StagesEnum.Fill, auctionParams)
   // TODO(asa): Dedup code here.
