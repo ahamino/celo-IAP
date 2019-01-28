@@ -244,7 +244,7 @@ export async function executeBid(
     .call()
   for (let i = 0; i < parseInt(numBids); i++) {
     const bid = parseBidParams(
-      await auction.methods.getBidParams(sellTokenAddress, buyTokenAddress, account, i).call()
+      await auction.methods.getBidParams(sellToken.options.address, buyToken.options.address, account, i).call()
     )
     console.log(`bids: ${bid}`)
     /*if (bid.bidHash === bidHash) {
