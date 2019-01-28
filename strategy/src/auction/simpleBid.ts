@@ -13,8 +13,8 @@ import { balanceOf, parseFromContractDecimals } from '@celo/sdk/dist/src/erc20-u
 import { Exchange as ExchangeType } from '@celo/sdk/types/Exchange'
 
 // Strategy parameters (feel free to play around with these)
-const bidDiscount = 1.1 // The 'discount' we bid at (1.1 = 10%)
-const balanceProportionToBid = 0.5 // The proportion of our sellTokenBalance we bid
+const bidDiscount = 1.065 // The 'discount' we bid at (1.1 = 10%)
+const balanceProportionToBid = 0.9 // The proportion of our sellTokenBalance we bid
 const randomFactor = Math.random() * 0.001 - 0.0005 // a random 'jitter' to make a bid easy to identify
 
 const FOUR_WEEKS = 4 * 7 * 24 * 3600

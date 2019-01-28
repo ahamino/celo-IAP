@@ -225,7 +225,7 @@ export async function executeBid(
   console.log(`Committed bid with salt: ${salt}`)
 
   await sleepUntilStage(StagesEnum.Reveal, auctionParams)
-  await revealBid(
+  let rev = await revealBid(
     auction,
     sellToken.options.address,
     buyToken.options.address,
@@ -236,6 +236,21 @@ export async function executeBid(
     account,
     web3
   )
+
+  console.log(`Results from reveal: ${rev}`)
+
+  const numBids = await auction.methods
+    .getNumBids(sellToken.options.address, buyToken.options.address, account)
+    .call()
+  for (let i = 0; i < parseInt(numBids); i++) {
+    const bid = parseBidParams(
+      await auction.methods.getBidParams(sellTokenAddress, buyTokenAddress, account, i).call()
+    )
+    console.log(`bids: ${bid}`)
+    /*if (bid.bidHash === bidHash) {
+      return i
+    }*/
+  }
 
   await sleepUntilStage(StagesEnum.Fill, auctionParams)
   // TODO(asa): Dedup code here.
